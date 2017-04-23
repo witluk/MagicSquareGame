@@ -10,9 +10,15 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Random;
+
 public class MainActivity extends AppCompatActivity {
 
-    private static final int[] BUTTON_IDS = {
+    private static final int[] EDITTEXT_IDS = {
             R.id.num1,
             R.id.num2,
             R.id.num3,
@@ -35,9 +41,19 @@ public class MainActivity extends AppCompatActivity {
 
     EditText [][] nums = new EditText[3][3];
     TextView [] results = new TextView[6];
-    Button submit, new_game, cont, exit_game;
+    EditText lvl;
+    Button submit, new_game, cont, exit_game, help;
 
     boolean ifAllEntered = true;
+
+    List<Integer> tempInputArray = new ArrayList<>();
+
+    int[][] inputArray = new int[3][3];
+
+    int[] resultArray = new int[6];
+
+    List<Integer> helpArray = new ArrayList<>();
+    int helpCount = 0;
 
     TextWatcher tw = new TextWatcher() {
         @Override
@@ -72,8 +88,6 @@ public class MainActivity extends AppCompatActivity {
                 ifAllEntered = true;
             }
         }
-    /* code goes here */
-    /* viewOnFocus can be used here */
     };
 
     @Override
@@ -81,10 +95,13 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        lvl = (EditText) findViewById(R.id.lvl);
+
         submit = (Button) findViewById(R.id.submit);
         new_game = (Button) findViewById(R.id.new_game);
         cont = (Button) findViewById(R.id.resume);
         exit_game = (Button) findViewById(R.id.exit_game);
+        help = (Button) findViewById(R.id.help);
 
         int k = 0;
         for(int id : TEXTVIEW_IDS) {
@@ -93,7 +110,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         int row=0, col=0;
-        for(int id : BUTTON_IDS) {
+        for(int id : EDITTEXT_IDS) {
             if(col==3){
                 col=0;
                 row++;
@@ -103,6 +120,35 @@ public class MainActivity extends AppCompatActivity {
             col++;
         }
 
+        setFields();
+        setHelpArray();
+    }
+
+    public void setFields(){
+        if(tempInputArray.isEmpty()) {
+            for (int i = 1; i < 10; i++) {
+                tempInputArray.add(i);
+            }
+        }
+
+        Collections.shuffle(tempInputArray);
+
+        for(int i=0; i<3; i++) {
+            for (int j = 0; j < 3; j++) {
+                inputArray[i][j] = tempInputArray.get(i+j+i*2);
+            }
+        }
+
+        for(int i=0; i<3; i++) {
+            int sumRow=0;
+            int sumCol=0;
+            for (int j = 0; j < 3; j++) {
+                sumRow += this.inputArray[i][j];
+                sumCol += this.inputArray[j][i];
+            }
+            results[i].setText(Integer.toString(sumRow));
+            results[i+3].setText(Integer.toString(sumCol));
+        }
     }
 
     public void submit(View v){
@@ -117,15 +163,55 @@ public class MainActivity extends AppCompatActivity {
             new_game.setEnabled(true);
         }
         submit.setEnabled(false);
+        help.setEnabled(false);
     }
 
     public void resume(View v){
         cont.setEnabled(false);
         new_game.setEnabled(false);
         submit.setEnabled(true);
+        help.setEnabled(true);
     }
 
-    public void newGame(View v){
+    public void setHelpArray(){
+        for (int i = 0; i < 9; i++) {
+            helpArray.add(i);
+        }
+
+        Collections.shuffle(helpArray);
+    }
+
+    public void help(View v){
+        if(helpCount<9 && !new_game.isEnabled()) {
+            int randInt;
+            do {
+                randInt = helpArray.get(helpCount);
+                helpCount++;
+            }while(!nums[randInt / 3][randInt % 3].getText().toString().equals("") && nums[randInt / 3][randInt % 3].getText().toString().equals(Integer.toString(inputArray[randInt / 3][randInt % 3])));
+
+            for(int i=0; i<3; i++) {
+                for (int j = 0; j < 3; j++) {
+                    if(nums[i][j].getText().toString().equals(Integer.toString(inputArray[randInt / 3][randInt % 3]))){
+                        nums[i][j].setText("");
+                    }
+                }
+            }
+
+            nums[randInt / 3][randInt % 3].setText(Integer.toString(inputArray[randInt / 3][randInt % 3]));
+        }
+        else{
+            Toast.makeText(getApplicationContext(), "Congrats!!! You win!!!", Toast.LENGTH_LONG).show();
+            cont.setEnabled(false);
+            submit.setEnabled(false);
+            help.setEnabled(false);
+            new_game.setEnabled(true);
+        }
+    }
+
+    public void setLvl(View v){
+        setFields();
+        Collections.shuffle(helpArray);
+        helpCount = 0;
         for(int i=0; i<3; i++) {
             for (int j = 0; j < 3; j++) {
                 nums[i][j].setText("");
@@ -134,13 +220,35 @@ public class MainActivity extends AppCompatActivity {
         cont.setEnabled(false);
         new_game.setEnabled(false);
         submit.setEnabled(false);
+        help.setEnabled(true);
+
+        int lvlVal = Integer.parseInt(lvl.getText().toString());
+        for(int i=8;i>=lvlVal;i--) {
+            int randInt = helpArray.get(helpCount);
+            helpCount++;
+            nums[randInt / 3][randInt % 3].setText(Integer.toString(inputArray[randInt / 3][randInt % 3]));
+        }
+    }
+
+    public void newGame(View v){
+        setFields();
+        Collections.shuffle(helpArray);
+        helpCount = 0;
+        for(int i=0; i<3; i++) {
+            for (int j = 0; j < 3; j++) {
+                nums[i][j].setText("");
+            }
+        }
+        cont.setEnabled(false);
+        new_game.setEnabled(false);
+        submit.setEnabled(false);
+        help.setEnabled(true);
+        lvl.setText("");
     }
 
     public void exitGame(View v){
         finish();
     }
-
-
 
     public boolean isWin(){
         for(int i=0; i<3; i++) {
