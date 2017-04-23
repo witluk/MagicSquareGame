@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
+    android:layout_height="fill_parent"
     android:layout_gravity="center"
     android:columnCount="7"
     android:orientation="horizontal"
@@ -65,8 +65,7 @@
         android:id="@+id/result1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="15dp"
-        android:text="12"/>
+        android:textSize="15dp"/>
 
     <TextView
         android:layout_width="wrap_content"
@@ -139,8 +138,7 @@
         android:id="@+id/result2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="15dp"
-        android:text="13"/>
+        android:textSize="15dp" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -213,8 +211,7 @@
         android:id="@+id/result3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="15dp"
-        android:text="20"/>
+        android:textSize="15dp"/>
 
     <TextView
         android:layout_width="wrap_content"
@@ -241,7 +238,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_column="0"
-        android:text="11"
         android:textSize="15dp"/>
 
     <TextView
@@ -249,7 +245,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_column="2"
-        android:text="20"
         android:textSize="15dp"/>
 
     <TextView
@@ -257,7 +252,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_column="4"
-        android:text="14"
         android:textSize="15dp"/>
 
     <Button
@@ -296,5 +290,29 @@
         android:layout_columnSpan="3"
         android:text="Exit Game"
         android:onClick="exitGame" />
+
+    <Button
+        android:id="@+id/help"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_columnSpan="4"
+        android:text="Help"
+        android:onClick="help" />
+
+    <EditText
+        android:id="@+id/lvl"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="number"
+        android:maxLength="1"
+        android:textSize="15dp"
+        android:hint="lvl" />
+
+    <Button
+        android:id="@+id/set_lvl"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="set lvl"
+        android:onClick="setLvl" />
 
 </GridLayout>
