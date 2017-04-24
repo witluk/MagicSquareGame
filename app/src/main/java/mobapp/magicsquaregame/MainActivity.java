@@ -1,20 +1,20 @@
 package mobapp.magicsquaregame;
 
+import android.os.SystemClock;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Chronometer;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.Random;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -43,6 +43,10 @@ public class MainActivity extends AppCompatActivity {
     TextView [] results = new TextView[6];
     EditText lvl;
     Button submit, new_game, cont, exit_game, help;
+    Chronometer timer;
+    TextView score;
+
+    int lvlVal = 0;
 
     boolean ifAllEntered = true;
 
@@ -93,7 +97,17 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        if(getResources().getConfiguration().orientation==1) {
+            setContentView(R.layout.activity_main);
+        }
+        else{
+            setContentView(R.layout.landscape_layout);
+        }
+
+        score = (TextView) findViewById(R.id.score);
+
+        timer = (Chronometer) findViewById(R.id.timer);
+        timer.start();
 
         lvl = (EditText) findViewById(R.id.lvl);
 
@@ -151,9 +165,21 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    public int setScore(){
+        String mins = timer.getText().toString().substring(0,2);
+        String secs = timer.getText().toString().substring(3,5);
+        int allSecs = Integer.parseInt(secs) + Integer.parseInt(mins) * 60;
+        int score = 1000 - allSecs*2 - helpCount*100 +lvlVal*100;
+        if(score<0){
+            score=0;
+        }
+        return score;
+    }
+
     public void submit(View v){
         if(isWin()){
             Toast.makeText(getApplicationContext(), "Congrats!!! You win!!!", Toast.LENGTH_LONG).show();
+            score.setText("Score: " + Integer.toString(setScore()));
             cont.setEnabled(false);
             new_game.setEnabled(true);
         }
@@ -162,15 +188,27 @@ public class MainActivity extends AppCompatActivity {
             cont.setEnabled(true);
             new_game.setEnabled(true);
         }
+        for(int i=0; i<3; i++){
+            for(int j=0; j<3; j++) {
+                nums[i][j].setEnabled(false);
+            }
+        }
         submit.setEnabled(false);
         help.setEnabled(false);
+        timer.stop();
     }
 
     public void resume(View v){
+        for(int i=0; i<3; i++){
+            for(int j=0; j<3; j++) {
+                nums[i][j].setEnabled(true);
+            }
+        }
         cont.setEnabled(false);
         new_game.setEnabled(false);
         submit.setEnabled(true);
         help.setEnabled(true);
+        timer.start();
     }
 
     public void setHelpArray(){
@@ -198,9 +236,11 @@ public class MainActivity extends AppCompatActivity {
             }
 
             nums[randInt / 3][randInt % 3].setText(Integer.toString(inputArray[randInt / 3][randInt % 3]));
+            nums[randInt / 3][randInt % 3].setEnabled(false);
         }
         else{
             Toast.makeText(getApplicationContext(), "Congrats!!! You win!!!", Toast.LENGTH_LONG).show();
+            score.setText("Score: " + Integer.toString(setScore()));
             cont.setEnabled(false);
             submit.setEnabled(false);
             help.setEnabled(false);
@@ -210,7 +250,15 @@ public class MainActivity extends AppCompatActivity {
 
     public void setLvl(View v){
         setFields();
+        for(int i=0; i<3; i++){
+            for(int j=0; j<3; j++) {
+                nums[i][j].setEnabled(true);
+            }
+        }
         Collections.shuffle(helpArray);
+        score.setText("");
+        timer.setBase(SystemClock.elapsedRealtime());
+        timer.start();
         helpCount = 0;
         for(int i=0; i<3; i++) {
             for (int j = 0; j < 3; j++) {
@@ -222,7 +270,7 @@ public class MainActivity extends AppCompatActivity {
         submit.setEnabled(false);
         help.setEnabled(true);
 
-        int lvlVal = Integer.parseInt(lvl.getText().toString());
+        lvlVal = Integer.parseInt(lvl.getText().toString());
         for(int i=8;i>=lvlVal;i--) {
             int randInt = helpArray.get(helpCount);
             helpCount++;
@@ -233,6 +281,9 @@ public class MainActivity extends AppCompatActivity {
     public void newGame(View v){
         setFields();
         Collections.shuffle(helpArray);
+        score.setText("");
+        timer.setBase(SystemClock.elapsedRealtime());
+        timer.start();
         helpCount = 0;
         for(int i=0; i<3; i++) {
             for (int j = 0; j < 3; j++) {
@@ -244,6 +295,11 @@ public class MainActivity extends AppCompatActivity {
         submit.setEnabled(false);
         help.setEnabled(true);
         lvl.setText("");
+        for(int i=0; i<3; i++){
+            for(int j=0; j<3; j++) {
+                nums[i][j].setEnabled(true);
+            }
+        }
     }
 
     public void exitGame(View v){
@@ -286,4 +342,14 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+        savedInstanceState.putLong("Timer", timer.getBase());
+        super.onSaveInstanceState(savedInstanceState);
+    }
+
+    public void onRestoreInstanceState(Bundle savedInstanceState){
+        if((savedInstanceState !=null) && savedInstanceState.containsKey("Timer"))
+            timer.setBase(savedInstanceState.getLong("Timer"));
+        super.onRestoreInstanceState(savedInstanceState);
+    }
 }
