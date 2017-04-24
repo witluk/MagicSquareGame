@@ -5,7 +5,7 @@
     android:layout_width="wrap_content"
     android:layout_height="fill_parent"
     android:layout_gravity="center"
-    android:columnCount="7"
+    android:columnCount="9"
     android:orientation="horizontal"
     tools:context="mobapp.magicsquaregame.MainActivity">
 
@@ -13,7 +13,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Numbers 1 to 9 have to be\nused once and only once"
-        android:layout_columnSpan="7"
+        android:layout_columnSpan="9"
         android:textSize="15dp"/>
 
     <EditText
@@ -67,6 +67,22 @@
         android:layout_height="wrap_content"
         android:textSize="15dp"/>
 
+    <Button
+        android:id="@+id/submit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Submit      "
+        android:enabled="false"
+        android:onClick="submit" />
+
+    <Button
+        android:id="@+id/resume"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:enabled="false"
+        android:text="Continue"
+        android:onClick="resume" />
+
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -84,6 +100,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_column="4"
+        android:layout_columnSpan="4"
         android:text=" + "
         android:textSize="15dp"/>
 
@@ -140,6 +157,21 @@
         android:layout_height="wrap_content"
         android:textSize="15dp" />
 
+    <Button
+        android:id="@+id/new_game"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="New Game"
+        android:enabled="false"
+        android:onClick="newGame" />
+
+    <Button
+        android:id="@+id/exit_game"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Exit Game"
+        android:onClick="exitGame" />
+
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -157,8 +189,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_column="4"
+        android:layout_columnSpan="4"
         android:text=" + "
         android:textSize="15dp"/>
+
+
 
     <EditText
         android:id="@+id/num7"
@@ -213,6 +248,14 @@
         android:layout_height="wrap_content"
         android:textSize="15dp"/>
 
+    <Button
+        android:id="@+id/help"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Help"
+        android:layout_columnSpan="2"
+        android:onClick="help" />
+
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -230,8 +273,26 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_column="4"
+        android:layout_columnSpan="3"
         android:text=" = "
         android:textSize="15dp"/>
+
+    <EditText
+        android:id="@+id/lvl"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="number"
+        android:maxLength="1"
+        android:layout_gravity="right"
+        android:textSize="15dp"
+        android:hint="lvl" />
+
+    <Button
+        android:id="@+id/set_lvl"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="set lvl"
+        android:onClick="setLvl" />
 
     <TextView
         android:id="@+id/result4"
@@ -253,69 +314,6 @@
         android:layout_height="wrap_content"
         android:layout_column="4"
         android:textSize="15dp"/>
-
-    <Button
-        android:id="@+id/submit"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_row="8"
-        android:layout_column="0"
-        android:layout_columnSpan="5"
-        android:text="Submit      "
-        android:enabled="false"
-        android:onClick="submit" />
-    <Button
-        android:id="@+id/resume"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_columnSpan="2"
-        android:enabled="false"
-        android:text="Continue"
-        android:onClick="resume" />
-
-    <Button
-        android:id="@+id/new_game"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_row="9"
-        android:layout_column="0"
-        android:layout_columnSpan="5"
-        android:text="New Game"
-        android:enabled="false"
-        android:onClick="newGame" />
-    <Button
-        android:id="@+id/exit_game"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_columnSpan="2"
-        android:text="Exit Game"
-        android:onClick="exitGame" />
-
-    <Button
-        android:id="@+id/help"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_columnSpan="5"
-        android:text="Help"
-        android:onClick="help" />
-
-    <EditText
-        android:id="@+id/lvl"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:inputType="number"
-        android:maxLength="1"
-        android:layout_columnSpan="1"
-        android:textSize="15dp"
-        android:hint="lvl" />
-
-    <Button
-        android:id="@+id/set_lvl"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_columnSpan="1"
-        android:text="set lvl"
-        android:onClick="setLvl" />
 
     <Chronometer
         android:id="@+id/timer"
