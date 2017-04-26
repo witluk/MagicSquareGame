@@ -50,13 +50,15 @@ public class MainActivity extends AppCompatActivity {
 
     boolean ifAllEntered = true;
 
-    List<Integer> tempInputArray = new ArrayList<>();
+    boolean ifChangeScape = false;
+
+    ArrayList<Integer> tempInputArray = new ArrayList<>();
 
     int[][] inputArray = new int[3][3];
 
-    int[] resultArray = new int[6];
+    String[] resultArray = new String[6];
 
-    List<Integer> helpArray = new ArrayList<>();
+    ArrayList<Integer> helpArray = new ArrayList<>();
     int helpCount = 0;
 
     TextWatcher tw = new TextWatcher() {
@@ -84,7 +86,7 @@ public class MainActivity extends AppCompatActivity {
                     }
                 }
             }
-            if(ifAllEntered){
+            if(ifAllEntered && !new_game.isEnabled()){
                 submit.setEnabled(true);
             }
             else{
@@ -134,34 +136,55 @@ public class MainActivity extends AppCompatActivity {
             col++;
         }
 
+
+
+    }
+
+    protected void onResume() {
+        super.onResume();
         setFields();
         setHelpArray();
     }
 
     public void setFields(){
-        if(tempInputArray.isEmpty()) {
-            for (int i = 1; i < 10; i++) {
-                tempInputArray.add(i);
+        if(!ifChangeScape) {
+            if (tempInputArray.isEmpty()) {
+                for (int i = 1; i < 10; i++) {
+                    tempInputArray.add(i);
+                }
+            }
+
+            Collections.shuffle(tempInputArray);
+
+            for (int i = 0; i < 3; i++) {
+                for (int j = 0; j < 3; j++) {
+                    inputArray[i][j] = tempInputArray.get(i + j + i * 2);
+                }
+            }
+
+            for (int i = 0; i < 3; i++) {
+                int sumRow = 0;
+                int sumCol = 0;
+                for (int j = 0; j < 3; j++) {
+                    sumRow += this.inputArray[i][j];
+                    sumCol += this.inputArray[j][i];
+                }
+                results[i].setText(Integer.toString(sumRow));
+                results[i + 3].setText(Integer.toString(sumCol));
+                resultArray[i] = (Integer.toString(sumRow));
+                resultArray[i + 3] = (Integer.toString(sumCol));
+
             }
         }
-
-        Collections.shuffle(tempInputArray);
-
-        for(int i=0; i<3; i++) {
-            for (int j = 0; j < 3; j++) {
-                inputArray[i][j] = tempInputArray.get(i+j+i*2);
+        else{
+            for (int i = 0; i < 3; i++) {
+                for (int j = 0; j < 3; j++) {
+                    inputArray[i][j] = tempInputArray.get(i + j + i * 2);
+                }
             }
-        }
-
-        for(int i=0; i<3; i++) {
-            int sumRow=0;
-            int sumCol=0;
-            for (int j = 0; j < 3; j++) {
-                sumRow += this.inputArray[i][j];
-                sumCol += this.inputArray[j][i];
+            for (int i = 0; i < 6; i++) {
+                results[i].setText(resultArray[i]);
             }
-            results[i].setText(Integer.toString(sumRow));
-            results[i+3].setText(Integer.toString(sumCol));
         }
     }
 
@@ -212,11 +235,15 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void setHelpArray(){
-        for (int i = 0; i < 9; i++) {
-            helpArray.add(i);
-        }
+        if(!ifChangeScape) {
+            for (int i = 0; i < 9; i++) {
+                helpArray.add(i);
+            }
 
-        Collections.shuffle(helpArray);
+            Collections.shuffle(helpArray);
+
+            ifChangeScape = true;
+        }
     }
 
     public void help(View v){
@@ -245,6 +272,7 @@ public class MainActivity extends AppCompatActivity {
             submit.setEnabled(false);
             help.setEnabled(false);
             new_game.setEnabled(true);
+            timer.stop();
         }
     }
 
@@ -318,7 +346,7 @@ public class MainActivity extends AppCompatActivity {
             int resRow = Integer.parseInt(this.results[i].getText().toString());
             int resCol = Integer.parseInt(this.results[i+3].getText().toString());
 
-            if(sumRow!=resRow && sumCol!=resCol){
+            if(sumRow!=resRow || sumCol!=resCol){
                 return false;
             }
         }
@@ -344,12 +372,55 @@ public class MainActivity extends AppCompatActivity {
 
     public void onSaveInstanceState(Bundle savedInstanceState) {
         savedInstanceState.putLong("Timer", timer.getBase());
+        savedInstanceState.putInt("lvlVal", lvlVal);
+        savedInstanceState.putString("lvl", lvl.getText().toString());
+        savedInstanceState.putBoolean("Submit", submit.isEnabled());
+        savedInstanceState.putBoolean("new_game", new_game.isEnabled());
+        savedInstanceState.putBoolean("cont", cont.isEnabled());
+        savedInstanceState.putBoolean("exit_game", exit_game.isEnabled());
+        savedInstanceState.putBoolean("help", help.isEnabled());
+        for(int i=0; i<3; i++) {
+            for (int j = 0; j < 3; j++) {
+                savedInstanceState.putBoolean("num"+i+j, nums[i][j].isEnabled());
+            }
+        }
+        savedInstanceState.putBoolean("ifAllEntered", ifAllEntered);
+        savedInstanceState.putBoolean("ifChangeScape", ifChangeScape);
+        savedInstanceState.putString("score", score.getText().toString());
+        savedInstanceState.putStringArray("ResultArray", resultArray);
+        savedInstanceState.putInt("helpCount", helpCount);
+        savedInstanceState.putIntegerArrayList("helpArray", helpArray);
+        savedInstanceState.putIntegerArrayList("tempInputArray", tempInputArray);
+        savedInstanceState.putBoolean("isActivated", timer.isActivated());
         super.onSaveInstanceState(savedInstanceState);
     }
 
     public void onRestoreInstanceState(Bundle savedInstanceState){
         if((savedInstanceState !=null) && savedInstanceState.containsKey("Timer"))
             timer.setBase(savedInstanceState.getLong("Timer"));
+        lvlVal = savedInstanceState.getInt("lvlVal");
+        lvl.setText(savedInstanceState.getString("lvl"));
+        submit.setEnabled(savedInstanceState.getBoolean("Submit"));
+        new_game.setEnabled(savedInstanceState.getBoolean("new_game"));
+        cont.setEnabled(savedInstanceState.getBoolean("cont"));
+        exit_game.setEnabled(savedInstanceState.getBoolean("exit_game"));
+        help.setEnabled(savedInstanceState.getBoolean("help"));
+        ifAllEntered = savedInstanceState.getBoolean("ifAllEntered");
+        ifChangeScape = savedInstanceState.getBoolean("ifChangeScape");
+        score.setText(savedInstanceState.getString("score"));
+        resultArray = savedInstanceState.getStringArray("ResultArray");
+        helpCount = savedInstanceState.getInt("helpCount");
+        helpArray = savedInstanceState.getIntegerArrayList("helpArray");
+        tempInputArray = savedInstanceState.getIntegerArrayList("tempInputArray");
+        timer.setActivated(savedInstanceState.getBoolean("isActivated"));
+        for(int i=0; i<3; i++) {
+            for (int j = 0; j < 3; j++) {
+                nums[i][j].setEnabled(savedInstanceState.getBoolean("num"+i+j));
+            }
+        }
+        if(new_game.isEnabled()){
+            timer.stop();
+        }
         super.onRestoreInstanceState(savedInstanceState);
     }
 }
